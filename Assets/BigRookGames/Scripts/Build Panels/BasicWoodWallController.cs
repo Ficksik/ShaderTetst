@@ -16,15 +16,22 @@ namespace BigRookGames.Scripts.Build_Panels
         private List<MeshRenderer> _renders = new List<MeshRenderer>();
         private float _shakeAmountCurrent;
         private bool _isGrow;
+        private Vector3 _formard;
+        private static readonly int ForwardNormal = Shader.PropertyToID("_ForwardNormal");
+        private Transform _transform;
 
         private void Start()
         {
+            _transform = transform;
+            _formard = _transform.forward;
+            
             UpdatePosShader();
         }
 
         [ContextMenu("UpdatePosShader")]
         private void UpdatePosShader()
         {
+            _transform ??= transform;
             var filters = GetComponentsInChildren<MeshRenderer>();
             foreach (var filter in filters)
             {
@@ -32,8 +39,9 @@ namespace BigRookGames.Scripts.Build_Panels
                 {
                     var block = new MaterialPropertyBlock();
                     filter.GetPropertyBlock(block);
-                    block.SetVector(ShakePoint,transform.position);
+                    block.SetVector(ShakePoint,_transform.position);
                     block.SetFloat(ShakeAmount,_shakeAmountCurrent);
+                    block.SetVector(ForwardNormal,_formard);
                     filter.SetPropertyBlock(block);
                         
                     _renders.Add(filter);
@@ -71,6 +79,9 @@ namespace BigRookGames.Scripts.Build_Panels
             for (int i = 0; i < _renders.Count; i++)
             {
                 _blocks[i].SetVector(ShakePoint,pos);
+#if UNITY_EDITOR
+                _blocks[i].SetVector(ForwardNormal,_transform.forward);
+#endif
                 _renders[i].SetPropertyBlock(_blocks[i]);
             }
 

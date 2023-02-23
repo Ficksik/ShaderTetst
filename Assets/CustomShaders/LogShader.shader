@@ -53,6 +53,7 @@ Shader "Unlit/LogShader"
             float _ShakeAmount;
             float3 _ShakePoint;
             float _DistanceShake;
+            float4 _ForwardNormal;     
 
             float distanceCenter(float3 worldPos)
             {
@@ -65,12 +66,17 @@ Shader "Unlit/LogShader"
             float4 shake_pos(Attributes IN)
             {
                 if(_ShakeAmount <= 0) return TransformObjectToHClip(IN.vertex);
+
+                float3 worldPos =  TransformObjectToWorld(IN.vertex);   
+                float dist = distanceCenter(worldPos);
+                if(dist <= 0) return TransformObjectToHClip(IN.vertex);            
                 
-                float3 worldPos =  TransformObjectToWorld(IN.vertex);
-                float3 worldNormal = TransformObjectToWorldNormal(IN.normal);
-                 float normZ = saturate(normalize(abs(worldNormal.z)));
-                normZ = normZ * _Time.y  * _SpeedShake;
-                worldPos.z += (sin(normZ) * _ShakeAmount ) * distanceCenter(worldPos); 
+                //float3 worldNormal = TransformObjectToWorldNormal(IN.normal);
+                float2 norm = saturate(normalize(abs(_ForwardNormal.xz)));
+                norm = sin(norm * _Time.y  * _SpeedShake) * _ShakeAmount;
+
+              
+                worldPos.xz += norm * dist; 
 
                 return TransformWorldToHClip(worldPos);
             }
