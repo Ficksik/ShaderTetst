@@ -30,10 +30,10 @@ public class HitCaster : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100))
             {
-                var b = hit.transform.gameObject.GetComponent<BasicWoodWallController>();
+                var b = hit.transform.gameObject.GetComponent<HitObject>();
                 if (b)
                 {
-                    var objs = FindObjectsOfType<BasicWoodWallController>();
+                    var objs = FindObjectsOfType<HitObject>();
                     foreach (var obj in objs)
                     {
                         if (obj != null)

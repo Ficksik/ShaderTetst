@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BigRookGames.Scripts.Build_Panels
 {
-    public class BasicWoodWallController : MonoBehaviour
+    public class BasicWoodWallController : HitObject
     {
         [SerializeField] private float _destroyTime =1f;
         [SerializeField] private float _shakeAmount = 0.2f;
@@ -82,7 +82,7 @@ namespace BigRookGames.Scripts.Build_Panels
             }
         }
 
-        public void Hit(Vector3 pos)
+        public override void Hit(Vector3 pos)
         {
             for (int i = 0; i < _renders.Count; i++)
             {
@@ -98,7 +98,7 @@ namespace BigRookGames.Scripts.Build_Panels
             _isGrow = true;
         }
 
-        public void NextStage()
+        public override void NextStage()
         {
             _stageNum++;
             if(_stages.Length <= _stageNum) return;
