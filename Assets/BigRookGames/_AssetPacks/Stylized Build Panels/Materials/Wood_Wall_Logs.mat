@@ -131,6 +131,9 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DistanceShake: 8
+    - _DropHeight: 2
+    - _DropSide: 1.5
+    - _DropSpeed: 0.3
     - _DstBlend: 0
     - _EnvironmentReflections: 0
     - _GlossMapScale: 0.303

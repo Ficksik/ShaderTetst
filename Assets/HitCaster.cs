@@ -3,27 +3,47 @@ using UnityEngine;
 
 public class HitCaster : MonoBehaviour
 {
-    private BasicWoodWallController[] _objs;
+    [SerializeField] private GameObject _boomEffect;
+    [SerializeField] private float _cooldown = 1f;
+
+    private float _currentCoolDown;
+    
+    private Camera _camera;
 
     private void Start()
     {
-        _objs = FindObjectsOfType<BasicWoodWallController>();
+        _camera = Camera.main;
     }
 
     void Update()
     {
+        if (_currentCoolDown > 0)
+        {
+            _currentCoolDown -= Time.deltaTime;
+            return;
+        }
         if (Input.GetMouseButton(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var screenPoint = Input.mousePosition ;
+            
+            Ray ray = _camera.ScreenPointToRay(screenPoint);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100))
             {
-                foreach (var obj in _objs)
+                var b = hit.transform.gameObject.GetComponent<BasicWoodWallController>();
+                if (b)
                 {
-                    if (obj != null)
+                    var objs = FindObjectsOfType<BasicWoodWallController>();
+                    foreach (var obj in objs)
                     {
-                        obj.Hit(hit.point);
+                        if (obj != null)
+                        {
+                            Instantiate(_boomEffect,hit.point,Quaternion.identity);
+                            obj.Hit(hit.point);
+                        }
                     }
+                    b.NextStage();
+                    _currentCoolDown = _cooldown;
                 }
             }
         }
